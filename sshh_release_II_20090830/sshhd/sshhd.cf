@@ -1,0 +1,28 @@
+# sshhd.cf
+
+# what the sshhd server connects to as the final destination
+# sshd in this example, but it can connect to anything that listens on a tcp socket, local or remote.
+destserver:127.0.0.1
+destport: 22
+
+# This defines where sshhd listens for requests from the cgi. 
+# The sshhcgi.cgi script should point to where sshhd is listening.
+# If it's not on the same machine listen on 0.0.0.0 or the outside interface.
+listenserver:127.0.0.1
+listenport:8888
+
+# how long to wait before dropping connections to destport because of inactivity
+# This number should be higher than throttlemax in sshh.cf or you might drop connections
+# that just haven't been polled in a while. Units are milliseconds 3600000 is an hour.
+servertimeout:3600000
+
+# This is where you make client connections to if you want to connect back through to the
+# sshh client. So for example you'd ssh -p 8887 user@127.0.0.1 to connect to the machine sshh is 
+# running on.
+netsilserver:127.0.0.1
+netsilport:8887
+
+# this is the shared secret between sshh and sshhd. Can be any length, spaces not allowed.
+# and obviously, it must match the secret setting in sshh.cf
+secret:thisismysecret
+

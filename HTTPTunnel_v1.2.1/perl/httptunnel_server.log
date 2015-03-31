@@ -1,0 +1,36 @@
+Tue Mar 31 00:10:29 2015 - ---------------------------------------------------------------------
+Tue Mar 31 00:10:29 2015 - Initializing HTTPtunnel Server
+Tue Mar 31 00:10:29 2015 - Opening server socket on port 80
+Tue Mar 31 00:10:30 2015 - HTTPtunnel server started and accepting connections
+Tue Mar 31 00:14:33 2015 - ---------------------------------------------------------------------
+Tue Mar 31 00:14:33 2015 - Initializing HTTPtunnel Server
+Tue Mar 31 00:14:33 2015 - Server socket on port 80: bind() failed: Address already in use
+Tue Mar 31 00:14:33 2015 - HTTPTunnel server startup failed
+Tue Mar 31 00:15:42 2015 - ---------------------------------------------------------------------
+Tue Mar 31 00:15:42 2015 - Initializing HTTPtunnel Server
+Tue Mar 31 00:15:42 2015 - Opening server socket on port 80
+Tue Mar 31 00:15:42 2015 - HTTPtunnel server started and accepting connections
+Tue Mar 31 00:16:38 2015 - C2: New tunnel established 127.0.0.1 -> 127.0.0.1:2223. Ident: 40780
+Tue Mar 31 00:17:01 2015 - C2: Disconnect on request client
+Tue Mar 31 00:17:01 2015 - C2: Sent 3630 bytes, received 4418 bytes
+Tue Mar 31 00:17:21 2015 - C2: New tunnel established 127.0.0.1 -> 127.0.0.1:2223. Ident: 38062
+Tue Mar 31 00:17:25 2015 - C2: Disconnect on request client
+Tue Mar 31 00:17:25 2015 - C2: Sent 2186 bytes, received 2066 bytes
+Tue Mar 31 00:18:09 2015 - C2: New tunnel established 127.0.0.1 -> 127.0.0.1:2223. Ident: 36794
+Tue Mar 31 00:18:26 2015 - C2: Disconnect on request client
+Tue Mar 31 00:18:26 2015 - C2: Sent 2050 bytes, received 1962 bytes
+Tue Mar 31 00:19:48 2015 - ---------------------------------------------------------------------
+Tue Mar 31 00:19:48 2015 - Initializing HTTPtunnel Server
+Tue Mar 31 00:19:48 2015 - Server socket on port 80: bind() failed: Address already in use
+Tue Mar 31 00:19:48 2015 - HTTPTunnel server startup failed
+Tue Mar 31 00:19:53 2015 - ---------------------------------------------------------------------
+Tue Mar 31 00:19:53 2015 - Initializing HTTPtunnel Server
+Tue Mar 31 00:19:53 2015 - Server socket on port 80: bind() failed: Address already in use
+Tue Mar 31 00:19:53 2015 - HTTPTunnel server startup failed
+Tue Mar 31 00:20:47 2015 - ---------------------------------------------------------------------
+Tue Mar 31 00:20:47 2015 - Initializing HTTPtunnel Server
+Tue Mar 31 00:20:47 2015 - Opening server socket on port 80
+Tue Mar 31 00:20:47 2015 - HTTPtunnel server started and accepting connections
+Tue Mar 31 00:21:04 2015 - C2: New tunnel established 127.0.0.1 -> 127.0.0.1:2223. Ident: 43256
+Tue Mar 31 00:21:06 2015 - C2: Disconnect on request client
+Tue Mar 31 00:21:06 2015 - C2: Sent 2050 bytes, received 1962 bytes

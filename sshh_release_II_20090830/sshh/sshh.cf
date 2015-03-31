@@ -1,0 +1,59 @@
+# sshh.cf
+
+# where the web proxy is. If you have a direct connection, you can set this to the ip
+# and port of the webserver running sshhcgi.cgi
+proxyserver:127.0.0.1
+proxyport: 80
+
+# proxy authentication. only basic authentication is supported
+username:myproxyusername
+password:myproxypassword
+
+
+# what to listen on from the client side to make outside connections via sshhd.
+# So if you had sshhd.cf pointing to 127.0.0.1:22 (sshd) then you'd run
+# ssh -p 3333 user@127.0.0.1 
+# to connect to it.
+# if you want to listen on any interface use 0.0.0.0
+listenserver:127.0.0.1
+listenport:3333
+
+# the url to hit on the webserver where sshhcgi.cgi is located
+endcaller:http://mymachineoutsidethefirewall.com/cgi-bin/sshhcgi.cgi
+
+# this is the passphrase used to encrypt the data going over the proxy.
+# the encryption scheme used is about as effective as ROT-13. The point is
+# to keep people snooping on the proxy server from seeing what is obviously going on.
+passphrase:this is the end
+
+# this is the shared secret between sshh and sshhd. Can be any length, spaces not allowed.
+# and obviously, it must match the secret setting in sshhd.cf
+secret:thisismysecret
+
+# throttling the hits to the web proxy.
+# one of the goals is not to be obvious. So instead of polling constantly, the webserver gets
+# hit when there's data waiting to go out, and then polling falls off at the throttledropoff rate.
+# both settings are in milliseconds.
+# So the idea is if you're using an ssh session and not typing much, it will poll less and less
+# until throttlemax has been reached and then will poll every throttlemax interval.
+# throttle max is the longest sshh will wait before polling any open connections on sshhd.
+# if there are no connections, it will still poll at the throttlemax interval looking for
+# connections coming back through the proxy via sshhd.
+# This means if you're trying to make a connection backwards through sshhd->sshh and there's 
+# no other connections being polled for, you may have to wait up to throttlemax ms before
+# the connection attempt will actually happen.
+# It's a tradeoff, if you don't mind showing up in the proxylogs as the biggest user of the proxy
+# set throttledropoff to 1000, if you want to be as inconspicuous as possible, set it to throttlemax.
+# units are milliseconds 60000 is one minute.
+throttlemax: 60000
+throttledropoff: 100
+
+# This is for making connections backwards through sshhd to sshh.
+# this is the destination endpoint to connect to. Logically the same thing as destserver and destport
+# in sshhd.cf, but going the other way.
+# This cute little feature makes whatever firewall you're trying to bypass completely useless.
+# (talk about bad return on investment) so if you don't want people to be able to connect backwards
+# through this, set the port number to 1 or something like that.
+tsedserver: 127.0.0.1
+tsedport: 22
+

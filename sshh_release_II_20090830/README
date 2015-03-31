@@ -1,0 +1,285 @@
+
+sshh Release I 8/14/2009 by Stu Mark spamme@deadpelican.com
+
+
+sshh (pronounced SSSSSSHHHHH!!!!) is a set of three programs that when 
+clicked together correctly allow you to persist one or more TCP sockets over an
+HTTP proxy.
+
+The end goal being that you can do something like ssh from one client
+machine to a sshd server somewhere else and the only access to the Internet
+available is an HTTP proxy.
+And once you have an ssh session, you can tunnel anything else over that.
+
+It's not fast, it's not pretty, and it's not polished, but it works and it's
+solid.
+
+It doesn't have to connect ssh sessions though, anything that makes a TCP
+connection should work over sshh.
+I've used it to run a telnet session, a POP3 mail pull, and even use it to
+redirect to a web proxy. Yes, you can run a web proxy over a web proxy.
+
+After I wrote this and got it all working, a friend of mine told me about
+httptunnel which is basically the same idea, but he beat me to it by 10
+years or so. 
+
+This was a proof of concept project for me and it does a few things that httptunnel
+does not.
+
+httptunnel can only support one connection at a time, sshh supports as many
+as your equipment can handle. In this way you can use it as an HTTP proxy
+and it won't get bogged down supporting only one connection at a time. And
+it doesn't have that problem where if one socket gets hung up the whole thing
+stops working.
+
+The other really sick thing that sshh does that httptunnel does not, is that
+once you have it set up, sshh allows you to make connections backwards
+through it.
+So you can connect from the inside out, and from the outside in.
+
+
+
+INSTALLATION
+
+
+There is no magic setup script or install program. I'm assuming you know something
+about command lines and how to use them. If you don't, sshh isn't for you.
+
+There is no configure script either. autoconf and automake and all that autocrap is
+the dumbest pile of shit I've ever heard of and I hate it all. I spend more time in 
+my life fighting with non working configure scripts than anything else. So I don't use them.
+
+You run make and the programs build.
+
+Untar the tgz file and either build and run them where they lie or copy them to 
+/usr/local/bin/sshh as you see fit.
+
+For this performance, the part of system administrator will be played by YOU.
+
+It will probably be necessary to copy the sshhcgi.cgi file from where you
+unzipped it to your cgi-bin directory on your webserver. If you've got some 
+kooky setup where you're a hyper control freak about what cgi's run on your 
+webserver, well, then you know what you're doing and don't need my help.
+
+
+BUILDING
+
+
+I've had it running on windows built under cygwin, Ubuntu 8 and Solaris 10.
+Just by running make.
+Untar the tgz file and run make in the sshh_release_XXX directory to make all 
+three binaries. 
+
+The resulting binaries and sample config files end up in bin/.
+Or if you're using windows and cygwin, you can download the prebuilt binaries.
+
+
+
+SETUP
+
+
+There's a config file for sshh, a config file for sshhd and a script
+called sshhcgi.cgi that you should go through and change settings as
+they are appropriate to your setup. I put a little description for what
+each option does, hopefully that and this explanation will make it all clear.
+
+When you run sshh or sshhd it will try and read its respective config file
+from the current directory. You can specify a different config file (if you 
+want to run multiple sshh daemons for example) by passing -c<full_path_of_config_file>
+to the application.
+
+For example:
+/usr/local/bin/sshh/sshh -c/usr/local/bin/sshh/otherconfig.cf
+
+
+The big picture process goes like this.
+
+Let's say machine A is your windows desktop at work and it's behind a 
+firewall and the only way out is through the company web proxy.
+
+Machine B is your Linux box at home with a broadband connection via a 
+popular ISP that blocks port 80.
+
+It's quite possible you're screwed. Some firewalls won't allow you to make 
+HTTP requests on a port other than 80.
+
+Anyway, the port doesn't really matter, the important part is that you run a
+webserver on machine B and that you can make connections to it. If not, give up
+now, you've got bigger problems to deal with.
+
+If you have connectivity....
+
+You run sshh on machine A, and you run sshhd on machine B. And you set up
+sshhcgi and sshhcgi.cgi on machine B's webserver.
+
+Then in sshh.cf on machine A, you set the endcaller URL to the location
+of where you installed the sshhcgi.cgi script
+
+endcaller:http://machineB.yi.org/cgi-bin/sshhcgi.cgi
+
+The sshhcgi.cgi file is not the binary you compiled. It is a script
+that runs sshhcgi with a few parameters that it requires. Take a
+look at the included example to see what I mean.
+
+Both sshh and sshhd are daemons that run and stay running forever.
+If either one is killed or dies, any existing connections you have go away.
+sshhcgi is fired off on every HTTP proxy request. So you can change its
+config in the sshhcgi.cgi script willy nilly.
+
+Once you have all your config files set the way you like with all the port
+numbers pointing where you want and everything is running, connecting is as 
+simple as typing this on machine A (using ssh as an example) 
+
+ssh -p3333 user@127.0.0.1
+
+If you want to create other tunnels over the ssh connection you pass -L and -R 
+parameters to ssh as appropriate.
+
+The above assumes the settings in the example sshh.cf included in the tarball.
+-- cut here --
+listenport:3333
+-- cut here --
+
+
+To make connections backwards, instead of starting from machine A, you start from 
+machine B
+ssh -p 8887 user@127.0.0.1
+
+This assumes the settings in the example sshhd.cf included in the tarball.
+-- cut here --
+netsilport:8887
+-- cut here --
+
+netsil. Listen backwards. Get it?
+
+
+
+
+THINGS TO CHECK FOR IF IT DOESN'T WORK.
+
+
+The passphrase must match in the sshh.cf file and the sshhcgi.cgi script.
+
+The secret must match in the sshh.cf file and the sshhd.cf file. If you change them
+you have to restart the daemons, they only read the config file when they start up.
+
+Make sure your proxy server settings are correct in sshh.cf
+
+-- cut here --
+proxyserver:127.0.0.1
+proxyport: 80
+username:myproxyusername
+password:myproxypassword
+-- cut here --
+
+If you don't know what your web proxy server is because your IE setup "detects settings
+automatically" read this:
+http://en.wikipedia.org/wiki/Web_Proxy_Autodiscovery_Protocol
+
+
+The endcaller URL must be the entire URL of the sshhcgi.cgi script, not the binary, the script.
+
+Put it in your browser to make sure it works from machine A. If you get some junk 
+back, it worked (remember it's roughly ROT13 encrypted) if you get a 404, you've 
+got the wrong URL. If you get a 500, then the cgi isn't set up properly. Make sure 
+you can run it from the command line on machine B.
+
+
+If your passphrase has spaces in it, make sure the line in sshhcgi.cgi has quotes around
+the passphrase. You can eliminate this from possibly being a problem by just not putting
+spaces in your passphrase.
+-- cut here --
+/usr/local/bin/sshh/sshhcgi 127.0.0.1 8888 "this is the end"
+-- cut here --
+
+Do NOT put quotes around it in sshh.cf
+-- cut here --
+passphrase:this is the end
+-- cut here --
+
+
+In my sample config files, I set all the listeners to 127.0.0.1 presuming that you 
+will be connecting from the same machine you're running the sshh/sshhd daemons on.
+If this is not the case either set them to 0.0.0.0 to listen on all interfaces, or 
+set them to the IP address of the interface you want to bind to.
+
+Be careful, this means other machines can use your handy dandy little setup. You may 
+not want that.
+
+
+When trying to make connections backwards from machine B to machine A, you may find 
+that the client program is able to connect but nothing happens.
+Here's what's going on.
+
+The whole process runs in one direction, from machine A to machine B. Machine A polls 
+machine B at various intervals. Every time machine A has some data to send to 
+machine B, it sends it.
+If no more data is forthgoing, (do you like that? I coined it myself) the frequency of 
+polling requests will taper off by the throttledropoff setting. It will do this up to a 
+maximum of throttlemax milliseconds.
+
+If there are no connections active between machine A and machine B, it will poll at 
+the throttlemax interval.
+
+Since there's no way (well there is, but not using sshh) for machine B to push data to machine A, 
+machine B has to wait around for machine A to call it to see if there's any new connections
+waiting to come back.
+That's what the delay is. It will eventually work, but if you have throttlemax set to an hour,
+it can take an hour to respond.
+
+The two ways around this are: set the throttlemax to a small number. This has the downside of making
+you more noticeable in the proxy logs. If this is not a problem for you, then go for it.
+The other thing you can try is to keep a connection open from machine A to machine B.
+For example an ssh or telnet session running joe. joe will update the time every minute thus
+not letting the throttle drop off get too great between hits.
+Nothing hi-tech going on here. Really.
+
+
+
+
+
+KNOWN PROBLEMS
+
+Once it's setup correctly and working I don't know of any problems with the software 
+itself, but I have seen rare cases where if the web proxy request fails you for some reason 
+and the protocol you're running on top of it can't recover, it will fail and drop 
+the connection. I've seen ssh do this a few times.
+
+The solution would be to write a recovery layer in sshh/sshhd. I haven't done that because
+it happens so infrequently. By all means go for it. That's what open source is all about.
+
+Other than that, like I said, it's not polished. It doesn't print out anything when
+you type sshh --help and it won't complain if a config parameter is missing, it will 
+just blow up. So if it dies randomly on startup for no reason, go through and
+make sure you didn't kabosh some config setting somewhere.
+
+
+
+
+FUTURE
+
+
+I've heard that people have run ssh over DNS.
+I was thinking of trying to persist a socket over amusing.org
+Latency would be horrible, I think.
+
+
+
+
+HELP
+
+
+My wife just had a baby and I need money.
+If you're the kind that responds to begging, I'm begging, please donate to the cause. 
+$1 would be nice, $5 would be very nice, and if you donate $141 million dollars
+I'll buy you a boat. Of my choosing. But it will be something nice. Promise.
+
+Or better yet, buy my iphone app. It's called "Bill Split" by Stu Mark
+
+Thank you.
+
+You can send me money [and questions] (preferably in that order)
+via paypal [and] at spamme@deadpelican.com
+
+
+
